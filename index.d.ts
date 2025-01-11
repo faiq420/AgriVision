@@ -1,0 +1,10 @@
+declare module '*.png';
+declare module '*.svg';
+declare module '*.jpg';
+declare module '*.jpeg';
+declare module '*.gif';
+declare module 'react-native-css-vh-vw'
+declare module 'react-native-global-font'
+declare module 'react-native-vector-icons/FontAwesome'
+declare module '@rneui/themed'
+declare module '@rneui/themed/dist/config'
