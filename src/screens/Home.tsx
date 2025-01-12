@@ -66,7 +66,7 @@ const Home = () => {
             style={styles.image}
           />
           <Text style={{...styles.serviceHeading, ...styles.headingColor}}>
-          Disease Detection
+            Disease Detection
           </Text>
           <Text style={styles.serviceDescription}>
             Our disease detection app analyzes plant leaf images to identify
@@ -110,8 +110,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fffefc',
     height: vh(70),
     color: '#1f2937',
-    fontFamily: 'Raleway',
-    fontWeight: 600,
+    fontWeight: '400',
+    fontFamily: 'Raleway-Light',
   },
   textColor: {
     color: '#1f2937',

@@ -1,45 +1,40 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
+import {SafeAreaView, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {enableScreens} from 'react-native-screens';
-import {
-  createBottomTabNavigator,
-  BottomTabScreenProps,
-} from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-enableScreens();
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {enableScreens} from 'react-native-screens';
 
 import Home from './src/screens/Home';
 import Splash from './src/screens/Splash';
 import Detection from './src/screens/Detection/Detection';
-import Header from './src/components/Header';
+import IdentifyPlant from './src/screens/Detection/IdentifyPlant';
+import DetectDisease from './src/screens/Detection/DetectDisease';
+
+enableScreens();
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
 type RootTabParamList = {
   Home: undefined;
   Detection: undefined;
+  IdentifyPlant: undefined;
+  DetectDisease: undefined;
 };
+
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
   return (
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Splash"
         screenOptions={{
           headerShown: true,
-          headerStyle: {backgroundColor: '#2878BD'},
+          headerStyle: {backgroundColor: '#14532d'},
           headerTintColor: '#fff',
+          headerTitleAlign: 'center',
           headerTitleStyle: {
             fontWeight: '400',
             fontFamily: 'Raleway-Light',
@@ -55,16 +50,41 @@ function App(): React.JSX.Element {
           component={HomeTab}
           options={{headerShown: false}}
         />
+        <Stack.Screen
+          name="Detection"
+          component={Detection}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="IdentifyPlant"
+          component={IdentifyPlant}
+          options={({navigation}) => ({
+            title: 'Identify Produce',
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="DetectDisease"
+          component={DetectDisease}
+          options={({navigation}) => ({
+            title: 'Detect Disease',
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+            ),
+          })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
 function HomeTab() {
-  const icons: {[key in keyof RootTabParamList]: string} = {
-    Home: 'home',
-    Detection: 'options-sharp',
-  };
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -75,9 +95,8 @@ function HomeTab() {
         headerShown: false,
         tabBarIcon: ({focused}) => {
           let iconName;
-
           if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home'; // You can choose different icons for active/inactive states
+            iconName = focused ? 'home' : 'home';
             return (
               <AntDesign
                 name={iconName}
@@ -86,7 +105,7 @@ function HomeTab() {
               />
             );
           } else if (route.name === 'Detect') {
-            iconName = focused ? 'picture' : 'picture'; // Change this to another icon from FontAwesome or any other icon set
+            iconName = focused ? 'picture' : 'picture';
             return (
               <AntDesign
                 name={iconName}
@@ -95,8 +114,6 @@ function HomeTab() {
               />
             );
           }
-
-          // Return default icon if no condition is met
           return (
             <AntDesign
               name="questioncircleo"
@@ -121,5 +138,18 @@ function HomeTab() {
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  screenTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+});
 
 export default App;
