@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
 import GlobalFont from 'react-native-global-font';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const Home = () => {
   useEffect(() => {
     GlobalFont.applyGlobal('Poppins');
@@ -22,19 +22,19 @@ const Home = () => {
         <Text style={styles.heading}>Features</Text>
         <View style={styles.grid}>
           <View style={styles.tile}>
-            <Icon name="viadeo" size={30} color="#14532d" />
+            <FontAwesome name="viadeo" size={30} color="#14532d" />
             <Text style={{fontSize: 14, ...styles.textColor}}>
               Easy Detection
             </Text>
           </View>
           <View style={styles.tile}>
-            <Icon name="pagelines" size={30} color="#14532d" />
+            <FontAwesome name="pagelines" size={30} color="#14532d" />
             <Text style={{fontSize: 14, ...styles.textColor}}>
               Cause & Solution
             </Text>
           </View>
           <View style={styles.tile}>
-            <Icon name="leaf" size={30} color="#14532d" />
+            <FontAwesome name="leaf" size={30} color="#14532d" />
             <Text style={{fontSize: 14, ...styles.textColor}}>
               Large Plant Support
             </Text>

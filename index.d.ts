@@ -6,5 +6,7 @@ declare module '*.gif';
 declare module 'react-native-css-vh-vw'
 declare module 'react-native-global-font'
 declare module 'react-native-vector-icons/FontAwesome'
+declare module 'react-native-vector-icons/AntDesign'
+declare module 'react-native-vector-icons/Ionicons'
 declare module '@rneui/themed'
 declare module '@rneui/themed/dist/config'
