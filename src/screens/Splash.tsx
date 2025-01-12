@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
-import logo from '../assets/splash.png';
+import logo from '../assets/AgriVisionLogo.jpeg';
 const Splash = (props: any) => {
   useEffect(() => {
     setTimeout(() => {
@@ -10,12 +10,9 @@ const Splash = (props: any) => {
   }, [props.navigation]);
 
   return (
-    <View style={[styles.container, {backgroundColor: '#fbfbfb'}]}>
+    <View style={styles.container}>
       <View style={styles.header_splash}>
-        <Image
-          source={logo}
-          style={styles.logo_splash}
-        />
+        <Image source={logo} style={styles.logo_splash} />
       </View>
     </View>
   );
@@ -26,10 +23,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
     padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logo_splash: {
-    width: '90%',
-    height: '90%',
+    // width: '90%',
+    // height: '90%',
+    height: vh(20),
+    width: vw(80),
     resizeMode: 'contain',
   },
   header_splash: {

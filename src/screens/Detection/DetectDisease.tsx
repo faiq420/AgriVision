@@ -31,6 +31,7 @@ const DetectDisease = () => {
   const [fileUri, setFileUri] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [response, setResponse] = useState<string | null>(null);
+
   const handleImagePickerResponse = (response: ImagePickerResponse) => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
@@ -39,7 +40,6 @@ const DetectDisease = () => {
     } else if (response.assets && response.assets.length > 0) {
       const asset = response.assets[0];
       const source = {uri: asset.uri};
-      console.log('response', JSON.stringify(response));
       setFilePath({data: asset.base64 || '', uri: asset.uri || ''});
       setFileData(asset.base64 || '');
       setFileName(asset.fileName || '');
@@ -51,35 +51,67 @@ const DetectDisease = () => {
       const fileType = asset.type || 'image/jpeg';
 
       // Prepare the FormData object
-      const formData = new FormData();
-      formData.append('image', {
-        uri: fileUri,
-        name: fileName,
-        type: fileType,
-      });
+      getBase64FromUri(fileUri)
+        .then(base64String => {
+          const file = base64ToFile(base64String, fileName);
 
-      // Send FormData to the API
-      sendToApi(formData);
+          // Prepare the FormData object and send it
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const url = 'https://your-endpoint-url.com/upload';
+          fetch(url, {
+            method: 'POST',
+            body: formData,
+          })
+            .then(response => response.json())
+            .then(result => {
+              console.log('Response:', result);
+              // setResponse(result)
+            })
+            .catch(error => console.error('Error uploading file:', error));
+        })
+        .catch(error => {
+          console.error('Error converting URI to base64:', error);
+        });
     }
   };
 
-  const sendToApi = async (formData: FormData) => {
-    try {
-      console.log(formData);
-      //   const response = await fetch('YOUR_API_ENDPOINT', {
-      //     method: 'POST',
-      //     body: formData,
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //       // Add any additional headers if required by your API
-      //     },
-      //   });
+  const base64ToFile = (base64String: string, fileName: string): File => {
+    // Extract the base64 string, excluding the prefix (data:image/png;base64,)
+    const byteString = atob(base64String.split(',')[1]);
 
-      //   const result = await response.json();
-      //   console.log('API response', result);
-    } catch (error) {
-      console.error('Error uploading image', error);
+    // Derive MIME type from the base64 string
+    const mimeType = base64String.split(',')[0].split(':')[1].split(';')[0];
+
+    // Convert base64 string into a binary array using Uint8Array
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    // Populate the Uint8Array with byte values
+    for (let i = 0; i < byteString.length; i++) {
+      uint8Array[i] = byteString.charCodeAt(i);
     }
+
+    // Create a Blob from the binary array (this is more efficient than manually using Uint8Array)
+    const blob = new Blob([uint8Array], {type: mimeType});
+
+    // Create and return a new File object from the Blob
+    return new File([blob], fileName, {type: mimeType});
+  };
+
+  const getBase64FromUri = (uri: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      fetch(uri)
+        .then(response => response.blob())
+        .then(blob => {
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob); // This will return base64 string
+        })
+        .catch(reject);
+    });
   };
 
   const chooseImage = () => {
