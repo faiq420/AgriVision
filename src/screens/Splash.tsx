@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
-import logo from '../assets/AgriVisionLogo.jpeg';
+import logo from '../assets/AgriVision.png';
 const Splash = (props: any) => {
   useEffect(() => {
     setTimeout(() => {
