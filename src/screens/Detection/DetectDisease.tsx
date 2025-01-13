@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
 import RenderHTML from 'react-native-render-html';
-// Interface for the state
+
 interface FilePath {
   data: string;
   uri: string;
@@ -32,86 +32,58 @@ const DetectDisease = () => {
   const [fileName, setFileName] = useState<string>('');
   const [response, setResponse] = useState<string | null>(null);
 
-  const handleImagePickerResponse = (response: ImagePickerResponse) => {
+  const handleImagePickerResponse = async (response: ImagePickerResponse) => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
-    } else if (response.errorMessage) {
-      console.log('ImagePicker Error: ', response.errorMessage);
-    } else if (response.assets && response.assets.length > 0) {
-      const asset = response.assets[0];
-      const source = {uri: asset.uri};
-      setFilePath({data: asset.base64 || '', uri: asset.uri || ''});
-      setFileData(asset.base64 || '');
-      setFileName(asset.fileName || '');
-      setFileUri(asset.uri || '');
+      return;
+    }
 
-      // Extract file details
+    if (response.errorMessage) {
+      console.log('ImagePicker Error: ', response.errorMessage);
+      return;
+    }
+
+    if (response.assets && response.assets.length > 0) {
+      const asset = response.assets[0];
       const fileUri = asset.uri || '';
       const fileName = asset.fileName || 'image.jpg';
       const fileType = asset.type || 'image/jpeg';
+      const base64Data = asset.base64 || '';
 
-      // Prepare the FormData object
-      getBase64FromUri(fileUri)
-        .then(base64String => {
-          const file = base64ToFile(base64String, fileName);
+      setFilePath({data: base64Data, uri: fileUri});
+      setFileData(base64Data);
+      setFileName(fileName);
+      setFileUri(fileUri);
 
-          // Prepare the FormData object and send it
-          const formData = new FormData();
-          formData.append('file', file);
+      const formData = new FormData();
+      formData.append('file', {
+        uri: fileUri,
+        name: fileName,
+        type: fileType,
+      });
 
-          const url = 'https://your-endpoint-url.com/upload';
-          fetch(url, {
-            method: 'POST',
-            body: formData,
-          })
-            .then(response => response.json())
-            .then(result => {
-              console.log('Response:', result);
-              // setResponse(result)
-            })
-            .catch(error => console.error('Error uploading file:', error));
-        })
-        .catch(error => {
-          console.error('Error converting URI to base64:', error);
-        });
+      sendToApi(formData);
     }
   };
 
-  const base64ToFile = (base64String: string, fileName: string): File => {
-    // Extract the base64 string, excluding the prefix (data:image/png;base64,)
-    const byteString = atob(base64String.split(',')[1]);
+  const sendToApi = async (formData: FormData) => {
+    try {
+      const response = await fetch(
+        'https://115e-2400-adc1-4ac-7100-e50a-72bc-734f-12b9.ngrok-free.app/predict',
+        {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
 
-    // Derive MIME type from the base64 string
-    const mimeType = base64String.split(',')[0].split(':')[1].split(';')[0];
-
-    // Convert base64 string into a binary array using Uint8Array
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const uint8Array = new Uint8Array(arrayBuffer);
-
-    // Populate the Uint8Array with byte values
-    for (let i = 0; i < byteString.length; i++) {
-      uint8Array[i] = byteString.charCodeAt(i);
+      const result = await response.json();
+      setResponse(result);
+    } catch (error) {
+      setResponse('Not able to detect plant. Try again.');
     }
-
-    // Create a Blob from the binary array (this is more efficient than manually using Uint8Array)
-    const blob = new Blob([uint8Array], {type: mimeType});
-
-    // Create and return a new File object from the Blob
-    return new File([blob], fileName, {type: mimeType});
-  };
-
-  const getBase64FromUri = (uri: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      fetch(uri)
-        .then(response => response.blob())
-        .then(blob => {
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob); // This will return base64 string
-        })
-        .catch(reject);
-    });
   };
 
   const chooseImage = () => {
@@ -120,7 +92,6 @@ const DetectDisease = () => {
       includeBase64: true,
       saveToPhotos: true,
     };
-
     launchImageLibrary(options, handleImagePickerResponse);
   };
 
@@ -130,7 +101,6 @@ const DetectDisease = () => {
       includeBase64: true,
       saveToPhotos: true,
     };
-
     launchCamera(options, handleImagePickerResponse);
   };
 
@@ -154,6 +124,7 @@ const DetectDisease = () => {
       return <Image source={template} style={styles.images} />;
     }
   };
+
   return (
     <SafeAreaView>
       <View style={styles.body}>
@@ -226,24 +197,16 @@ const DetectDisease = () => {
 };
 
 const styles = StyleSheet.create({
-  //   scrollView: {
-  //     backgroundColor: Colors.lighter,
-  //   },
   body: {
     borderColor: 'black',
     borderWidth: 1,
     height: vh(100),
     backgroundColor: '#fffefc',
-    // height: Dimensions.get('screen').height - 20,
-    // width: Dimensions.get('screen').width,
   },
   ImageSections: {
     paddingVertical: 8,
     paddingHorizontal: 2,
     alignItems: 'center',
-    // justifyContent: 'center',
-    // backgroundColor: 'blue',
-    // height: vh(30),
   },
   bin: {
     height: 25,
@@ -261,9 +224,7 @@ const styles = StyleSheet.create({
   btnParentSection: {
     alignItems: 'center',
     marginTop: 10,
-    flexDirection: 'row',
     padding: 20,
-    justifyContent: 'space-between',
   },
   btnSection: {
     width: 180,

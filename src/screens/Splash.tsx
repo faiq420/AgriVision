@@ -27,8 +27,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo_splash: {
-    // width: '90%',
-    // height: '90%',
     height: vh(20),
     width: vw(80),
     resizeMode: 'contain',
@@ -36,7 +34,6 @@ const styles = StyleSheet.create({
   header_splash: {
     justifyContent: 'center',
     alignItems: 'center',
-    // marginTop: 30,
   },
 });
 export default Splash;

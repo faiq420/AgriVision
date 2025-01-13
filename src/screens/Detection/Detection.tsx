@@ -45,32 +45,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f8f8f8', // Light background for the screen
+    backgroundColor: '#f8f8f8',
   },
   heading: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    // marginBottom: 20,
-    color: '#333', // Heading color
+    color: '#333',
   },
   gridContainer: {
-    // flexDirection: 'row',
-    // flexWrap: 'wrap',
-    // justifyContent: 'space-between',
     marginTop: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: 'red',
     height: vh(90),
   },
   tile: {
     backgroundColor: '#ffffff',
-    width: '48%', // Two tiles per row (adjust size for your layout)
+    width: '48%',
     marginBottom: 20,
     borderRadius: 10,
-    elevation: 3, // Shadow for Android
-    shadowColor: '#000', // Shadow for iOS
+    elevation: 3,
+    shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 3,

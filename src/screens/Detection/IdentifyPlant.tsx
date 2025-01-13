@@ -21,7 +21,6 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {vh, vw} from 'react-native-css-vh-vw';
 
-// Interface for the state
 interface FilePath {
   data: string;
   uri: string;
@@ -33,54 +32,57 @@ const IdentifyPlant = () => {
   const [fileUri, setFileUri] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [response, setResponse] = useState<string | null>(null);
-  const handleImagePickerResponse = (response: ImagePickerResponse) => {
+  const handleImagePickerResponse = async (response: ImagePickerResponse) => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
-    } else if (response.errorMessage) {
-      console.log('ImagePicker Error: ', response.errorMessage);
-    } else if (response.assets && response.assets.length > 0) {
-      const asset = response.assets[0];
-      const source = {uri: asset.uri};
-      console.log('response', JSON.stringify(response));
-      setFilePath({data: asset.base64 || '', uri: asset.uri || ''});
-      setFileData(asset.base64 || '');
-      setFileName(asset.fileName || '');
-      setFileUri(asset.uri || '');
+      return;
+    }
 
-      // Extract file details
+    if (response.errorMessage) {
+      console.log('ImagePicker Error: ', response.errorMessage);
+      return;
+    }
+
+    if (response.assets && response.assets.length > 0) {
+      const asset = response.assets[0];
       const fileUri = asset.uri || '';
       const fileName = asset.fileName || 'image.jpg';
       const fileType = asset.type || 'image/jpeg';
+      const base64Data = asset.base64 || '';
 
-      // Prepare the FormData object
+      setFilePath({data: base64Data, uri: fileUri});
+      setFileData(base64Data);
+      setFileName(fileName);
+      setFileUri(fileUri);
+
       const formData = new FormData();
-      formData.append('image', {
+      formData.append('file', {
         uri: fileUri,
         name: fileName,
         type: fileType,
       });
 
-      // Send FormData to the API
       sendToApi(formData);
     }
   };
 
   const sendToApi = async (formData: FormData) => {
     try {
-      console.log(formData);
-      //   const response = await fetch('YOUR_API_ENDPOINT', {
-      //     method: 'POST',
-      //     body: formData,
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //       // Add any additional headers if required by your API
-      //     },
-      //   });
+      const response = await fetch(
+        'https://115e-2400-adc1-4ac-7100-e50a-72bc-734f-12b9.ngrok-free.app/predict',
+        {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
 
-      //   const result = await response.json();
-      //   console.log('API response', result);
+      const result = await response.json();
+      setResponse(result);
     } catch (error) {
-      console.error('Error uploading image', error);
+      setResponse('Not able to detect plant. Try again.');
     }
   };
 
@@ -185,24 +187,16 @@ const IdentifyPlant = () => {
 };
 
 const styles = StyleSheet.create({
-  //   scrollView: {
-  //     backgroundColor: Colors.lighter,
-  //   },
   body: {
     borderColor: 'black',
     borderWidth: 1,
     height: vh(100),
     backgroundColor: '#fffefc',
-    // height: Dimensions.get('screen').height - 20,
-    // width: Dimensions.get('screen').width,
   },
   ImageSections: {
-    paddingHorizontal: 8,
     paddingVertical: 8,
+    paddingHorizontal: 2,
     alignItems: 'center',
-    // justifyContent: 'center',
-    // backgroundColor: 'blue',
-    height: vh(70),
   },
   bin: {
     height: 25,
@@ -220,9 +214,7 @@ const styles = StyleSheet.create({
   btnParentSection: {
     alignItems: 'center',
     marginTop: 10,
-    flexDirection: 'row',
     padding: 20,
-    justifyContent: 'space-between',
   },
   btnSection: {
     width: 180,
