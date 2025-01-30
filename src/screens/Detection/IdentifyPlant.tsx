@@ -20,6 +20,7 @@ import {
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {vh, vw} from 'react-native-css-vh-vw';
+import axios from 'axios';
 
 interface FilePath {
   data: string;
@@ -69,7 +70,7 @@ const IdentifyPlant = () => {
   const sendToApi = async (formData: FormData) => {
     try {
       const response = await fetch(
-        'https://115e-2400-adc1-4ac-7100-e50a-72bc-734f-12b9.ngrok-free.app/predict',
+        'https://87a8-2400-adc1-4ac-7100-4101-81a-a40d-573c.ngrok-free.app/predict',
         {
           method: 'POST',
           body: formData,
@@ -80,8 +81,9 @@ const IdentifyPlant = () => {
       );
 
       const result = await response.json();
-      setResponse(result);
+      setResponse(result.prediction);
     } catch (error) {
+      console.log(error);
       setResponse('Not able to detect plant. Try again.');
     }
   };

@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
 import RenderHTML from 'react-native-render-html';
-import axios from "axios";
+import axios from 'axios';
 
 interface FilePath {
   data: string;
@@ -67,27 +67,23 @@ const DetectDisease = () => {
     }
   };
 
-  import axios from "axios";
-
   const sendToApi = async (formData: FormData) => {
     try {
       const response = await axios.post(
-        "https://115e-2400-adc1-4ac-7100-e50a-72bc-734f-12b9.ngrok-free.app/predict",
+        'https://115e-2400-adc1-4ac-7100-e50a-72bc-734f-12b9.ngrok-free.app/predict',
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
-        }
+        },
       );
-  
       setResponse(response.data);
     } catch (error) {
       console.error(error);
-      setResponse("Not able to detect plant. Try again.");
+      setResponse('Not able to detect plant. Try again.');
     }
   };
-  
 
   const chooseImage = () => {
     const options = {
