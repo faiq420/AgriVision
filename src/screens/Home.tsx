@@ -1,9 +1,18 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
 import GlobalFont from 'react-native-global-font';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const Home = () => {
+  const navigation = useNavigation();
   useEffect(() => {
     GlobalFont.applyGlobal('Poppins');
   }, []);
@@ -42,42 +51,52 @@ const Home = () => {
         </View>
       </View>
       {/* Services */}
-      <View style={{marginTop: 40}}>
+      <View style={{marginVertical: 40}}>
         <Text style={styles.heading}>Services</Text>
-        <View style={styles.serviceCard}>
-          <Image
-            source={require('../assets/fruitsandvegies.jpg')}
-            style={styles.image}
-          />
-          <Text style={{...styles.serviceHeading, ...styles.headingColor}}>
-            Fruits & Veggies Identification
-          </Text>
-          <Text style={styles.serviceDescription}>
-            The advanced vegetation identification system uses machine learning
-            to accurately identify fruits and vegetables in real time. This
-            feature aids farmers, researchers, and gardening enthusiasts in
-            recognizing plants on-site to make informed decisions about crops
-            and produce.
-          </Text>
-        </View>
-        <View style={styles.serviceCard}>
-          <Image
-            source={require('../assets/PestedLeave.jpg')}
-            style={styles.image}
-          />
-          <Text style={{...styles.serviceHeading, ...styles.headingColor}}>
-            Disease Detection
-          </Text>
-          <Text style={styles.serviceDescription}>
-            Our disease detection app analyzes plant leaf images to identify
-            potential illnesses and assess damage, enabling users to take prompt
-            action and prevent crop loss, without relying on indiscriminate
-            pesticide use.
-          </Text>
-        </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('IdentifyPlant');
+          }}>
+          <View style={styles.serviceCard}>
+            <Image
+              source={require('../assets/fruitsandvegies.jpg')}
+              style={styles.image}
+            />
+            <Text style={{...styles.serviceHeading, ...styles.headingColor}}>
+              Fruits & Veggies Identification
+            </Text>
+            <Text style={styles.serviceDescription}>
+              The advanced vegetation identification system uses machine
+              learning to accurately identify fruits and vegetables in real
+              time. This feature aids farmers, researchers, and gardening
+              enthusiasts in recognizing plants on-site to make informed
+              decisions about crops and produce.
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('DetectDisease');
+          }}>
+          <View style={styles.serviceCard}>
+            <Image
+              source={require('../assets/PestedLeave.jpg')}
+              style={styles.image}
+            />
+            <Text style={{...styles.serviceHeading, ...styles.headingColor}}>
+              Disease Detection
+            </Text>
+            <Text style={styles.serviceDescription}>
+              Our disease detection app analyzes plant leaf images to identify
+              potential illnesses and assess damage, enabling users to take
+              prompt action and prevent crop loss, without relying on
+              indiscriminate pesticide use.
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
       {/* Vision */}
-      <View style={{marginTop: 40}}>
+      {/* <View style={{marginTop: 40}}>
         <Text style={styles.heading}>Vision</Text>
         <View style={styles.visionContainer}>
           <Image
@@ -99,7 +118,7 @@ const Home = () => {
           </Text>
           <Text style={styles.visionDescription}></Text>
         </View>
-      </View>
+      </View> */}
     </ScrollView>
   );
 };
@@ -190,8 +209,8 @@ const styles = StyleSheet.create({
   serviceCard: {
     borderRadius: 10,
     padding: 15,
-    width: '100%',
     marginBottom: 20,
+    width: '100%',
     backgroundColor: '#fff',
     elevation: 3,
     shadowColor: '#000',

@@ -33,6 +33,8 @@ const IdentifyPlant = () => {
   const [fileUri, setFileUri] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [response, setResponse] = useState<string | null>(null);
+  const [fetching, setFetching] = useState(false);
+
   const handleImagePickerResponse = async (response: ImagePickerResponse) => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
@@ -55,7 +57,7 @@ const IdentifyPlant = () => {
       setFileData(base64Data);
       setFileName(fileName);
       setFileUri(fileUri);
-
+      setResponse(null);
       const formData = new FormData();
       formData.append('file', {
         uri: fileUri,
@@ -69,6 +71,7 @@ const IdentifyPlant = () => {
 
   const sendToApi = async (formData: FormData) => {
     try {
+      setFetching(true);
       const response = await fetch(
         'https://87a8-2400-adc1-4ac-7100-4101-81a-a40d-573c.ngrok-free.app/predict',
         {
@@ -85,6 +88,8 @@ const IdentifyPlant = () => {
     } catch (error) {
       console.log(error);
       setResponse('Not able to detect plant. Try again.');
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -156,6 +161,16 @@ const IdentifyPlant = () => {
           )}
 
           <ScrollView style={{height: vh(20), marginTop: 20}}>
+            {fetching && (
+              <Text
+                style={{
+                  color: '#000',
+                  textAlign: 'center',
+                  fontStyle: 'italic',
+                }}>
+                Fetching...
+              </Text>
+            )}
             {response && (
               <Text style={{color: '#1f2937'}}>Detected Plant: {response}</Text>
             )}

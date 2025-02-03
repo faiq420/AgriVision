@@ -32,6 +32,7 @@ const DetectDisease = () => {
   const [fileUri, setFileUri] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [response, setResponse] = useState<string | null>(null);
+  const [fetching, setFetching] = useState(false);
 
   const handleImagePickerResponse = async (response: ImagePickerResponse) => {
     if (response.didCancel) {
@@ -55,7 +56,7 @@ const DetectDisease = () => {
       setFileData(base64Data);
       setFileName(fileName);
       setFileUri(fileUri);
-
+      setResponse(null)
       const formData = new FormData();
       formData.append('file', {
         uri: fileUri,
@@ -69,19 +70,25 @@ const DetectDisease = () => {
 
   const sendToApi = async (formData: FormData) => {
     try {
-      const response = await axios.post(
-        'https://115e-2400-adc1-4ac-7100-e50a-72bc-734f-12b9.ngrok-free.app/predict',
-        formData,
+      setFetching(true);
+      const response = await fetch(
+        'https://6e96-2400-adc1-4ac-7100-3917-b04b-e88d-fd2f.ngrok-free.app/predict',
         {
+          method: 'POST',
+          body: formData,
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         },
       );
-      setResponse(response.data);
+
+      const result = await response.json();
+      setResponse(result);
     } catch (error) {
       console.error(error);
       setResponse('Not able to detect plant. Try again.');
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -128,7 +135,7 @@ const DetectDisease = () => {
     <SafeAreaView>
       <View style={styles.body}>
         <View style={styles.ImageSections}>
-          <View>
+          <View style={{alignItems: 'center'}}>
             <View>{renderFileData()}</View>
             <Text style={{color: '#1f2937'}}>{fileName}</Text>
           </View>
@@ -151,12 +158,13 @@ const DetectDisease = () => {
             </View>
           )}
         </View>
-        <ScrollView
-          style={{
-            maxHeight: vh(40),
-            marginTop: 20,
-            padding: 8,
-          }}>
+        <ScrollView style={styles.responseContainer}>
+          {fetching && (
+            <Text
+              style={{color: '#000', textAlign: 'center', fontStyle: 'italic'}}>
+              Fetching...
+            </Text>
+          )}
           {response && (
             <RenderHTML
               contentWidth={width}
@@ -222,7 +230,7 @@ const styles = StyleSheet.create({
   },
   btnParentSection: {
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 5,
     padding: 20,
   },
   btnSection: {
@@ -239,6 +247,18 @@ const styles = StyleSheet.create({
     color: 'gray',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  responseContainer: {
+    width: '100%',
+    // backgroundColor: '#fff',
+    // elevation: 3,
+    // shadowColor: '#000',
+    // shadowOpacity: 0.1,
+    // shadowRadius: 5,
+    // shadowOffset: {width: 0, height: 5},
+    maxHeight: vh(30),
+    marginVertical: 20,
+    padding: 20,
   },
 });
 
